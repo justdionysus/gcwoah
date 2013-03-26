@@ -54,5 +54,5 @@ There is code to do the stack walk in the JavascriptCore GC implementation but I
 
 This is "only" a heap address disclosure.  Maybe it's impractical to use this sort of technique in a "weaponized" exploit but I found the technique and widespread applicability (well, sort of) interesting enough to share.  Also, I can think of a lot of times knowing a heap address will level-up a vulnerability into something very useful.  Anyway, I hope this was interesting and I'm really curious to see where else this sort of thing pops up.
 
-Oh, and if see any points I'm wrong about above, please let me know so I can fix my description.  I've only been goofing with this specific issue for a little more than a week -- I'm sure I've got some stuff incorrect.
+Oh, and if see any points I'm wrong about above, please let me know (mail to dion@trapbit.com) so I can fix my description.  I've only been goofing with this specific issue for a little more than a week -- I'm sure I've got some stuff incorrect.
 
