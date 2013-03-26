@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+    <title>GCWoah (Firefox) v0.1</title>
+    <script src="gcwoah.js"></script>
+    <script>
+    function logit(msg) {
+        document.getElementById("console").value += msg + '\n';
+    }
+
+    function init() {
+        GCWoah.setLoggingFunction(logit);
+    }
+    </script>
+</head>
+<body onload="init();">
+    <h2> GCWoah (Firefox) v0.1</h2>
+    <p>
+        <textarea id="console" rows="25" cols="80" readonly=true style="font: 12px/14px monospace;"></textarea>
+    </p>
+    <div id="doit" style="border: 3px solid black; background-color: #dddddd; text-align: center; margin: 10px;">
+        <div style="margin: 20px;" onclick="document.getElementById('console').value = ''; GCWoah.scanForHeapObject();">
+            Start PoC!
+        </div>
+    </div>
+</body>
+</html>
