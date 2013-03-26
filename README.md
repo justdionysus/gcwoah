@@ -32,7 +32,7 @@ Now, I can layout (roughly) the algorithm for performing the disclosure in Tamar
             savedObjects = strongs;
             win(address);
 
-In practice, it isn't *quite* that simple but almost.  The code is in this repository and I have the PoC hosted [here].  It seems to work for me on Windows with the latest Flash Player plugin in the 3 big browsers.
+In practice, it isn't *quite* that simple but almost.  The code is [here] and I have the PoC hosted [here](http://www.trapbit.com/demos/gcwoah/GCW.swf).  It seems to work for me on Windows with the latest Flash Player plugin in the 3 big browsers.  If it doesn't work the first time, reload.  It's not 100% but I think it could be tweaked.  Most of the time it takes < 5 seconds.
 
 Next, I tried Firefox.  At first, it was promising.  There is a new ES6 datatype called [WeakMap](https://developer.mozilla.org/en-US/docs/JavaScript/Reference/Global_Objects/WeakMap).  Sounds juicy, right? And it is but smarter people than I have been hard at work predicting these sorts of shenanigans.  For example, see [this](http://wiki.ecmascript.org/doku.php?id=strawman:gc_semantics#confidentiality). To the point, the definition of a WeakMap does not allow iteration.  Another thought was if any unique identifiers, like the timer identifiers, are reused, it would be easy to determine when a timer was finalized -- in FF at least, this doesn't work.  I also considered objects that may have IO side-effects when finalized but I was unable to find anything like that in the short time I searched.  Finally, I went back to the WeakMap and looked at the implemention.
 
