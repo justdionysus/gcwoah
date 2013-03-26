@@ -12,25 +12,37 @@ Getting something on the stack is easy for most engines -- JITing engines tend t
 
 Let's do the easy one first.  Anyone want to guess?  Yes, that's right: Tamarin, the engine in Adobe Flash Player.  Tamarin supports the creation of "weak key" [Dictionary objects](http://help.adobe.com/en_US/FlashPlatform/reference/actionscript/3/flash/utils/Dictionary.html#Dictionary()).  A Dictionary is a mapping from Objects to Objects. If created with weak keys, the keys in the Dictionary are not considered a reference during GC. The Dictionary object also supports iteration.  These two features allow the attacker to disclose when an object is garbage collected by adding the object as a key in the weak dictionary and then checking the size (by iterating over it) to determine if the key has been removed from the Dictionary.
 
+The general idea is to step through the address space guessing addresses.  We can detect that we've found an object address if one of the objects in our weak dictionary has not gone away after all of the *real* references to it have been removed.  Since the GC algorithm has no way to determine the types of the values stored on the stack, we can place a double floating point value on the stack such that if it is interpreted as two pointer values they pass the Object pointer heuristic (if that guessed address is allocated).
+
 Now, I can layout (roughly) the algorithm for performing the disclosure in Tamarin:
 
+    // Iterate over possible heap addresses (complete guesses)
     for each address in candidateAddresses:
         strongs = []
         weaks = new Dictionary(true); // create it with weakKeys
     
+        // Spray heap with objects.  Pin them in the GC by storing
+        // them in a regular array.  Also put them in the weak Dictionary
+        // to detect if they've been finalized.
         strongs = createABunchOfObjects();
         for each obj in strongs:
             weaks[obj] = 1;
 
+        // Place the guessed address on the stack where the GC will 
+        // mistakenly try to use it as an Object pointer. 
         putAddressOnStack(address);
 
+        // Remove all "real" references to the sprayed Objects and
+        // force a GC.  They should all get cleaned up.
         strongs = [];
-
         forceGC();
 
+        // If all of the weak references were cleaned up, the stack value
+        // didn't match one of those.  Otherwise, we probably pinned (marked)
+        // one of the objects still left.
         if (countWeaks() > 0):
             savedObjects = strongs;
-            win(address);
+            reportHeapAddress(address);
 
 In practice, it isn't *quite* that simple but almost.  The code is [here] and I have the PoC hosted [here](http://www.trapbit.com/demos/gcwoah/GCW.swf).  It seems to work for me on Windows with the latest Flash Player plugin in the 3 big browsers.  If it doesn't work the first time, reload.  It's not 100% but I think it could be tweaked.  Most of the time it takes < 5 seconds.
 
